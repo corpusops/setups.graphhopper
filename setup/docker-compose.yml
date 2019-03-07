@@ -1,0 +1,56 @@
+version: '3.7'
+x-images:
+  env: &env
+    env_file: [.env, docker.env]
+    environment: {"COMPOSE_PROJECT_NAME": "$COMPOSE_PROJECT_NAME"}
+  graphhopper: &graphhopper
+    <<: [ *env ]
+    build: {context: ".", dockerfile: Dockerfile}
+    # latest image is only used in prod (without dev & test tools)
+    image: "${GRAPHHOPPER_IMAGE}:${GRAPHHOPPER_IMAGE_VERSION}"
+    command: "$GRAPHHOPPER_PBFS"
+    tty: true
+services:
+  lbswitcher:
+    <<: [ *env ]
+    build: {dockerfile: Dockerfile, context: "switcher"}
+    image: corpusops/graphhopper/lb-switcher
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./switcher:/switcher
+    - switcher-data:/switcher-data
+    - graphhopper-ying:/ying
+    - graphhopper-yang:/yang
+    - graphhopper-traefik:/traefik
+  traefik:
+    <<: [ *env ]
+    image: corpusops/traefik:alpine
+    entrypoint:
+    - /bin/sh
+    - "-exc"
+    - |-
+      frep /staticconf/traefik.toml:/traefik.toml --overwrite
+      frep /staticconf/00_routing.toml:/traefik/00_routing.toml --overwrite
+      traefik \
+       --sendanonymoususage=false --defaultentrypoints=http \
+       --accesslog --accesslog.bufferingsize=10 --loglevel=info \
+       --rest --api --web --web.metrics
+    volumes:
+    - ./traefik:/staticconf
+    - graphhopper-traefik:/traefik
+  graphhopper-ying:
+    <<: [ *graphhopper ]
+    volumes:
+    - ./config.yml:/graphhopper/config.yml
+    - graphhopper-ying:/data
+  graphhopper-yang:
+    <<: [ *graphhopper ]
+    volumes:
+    - ./config.yml:/graphhopper/config.yml
+    - graphhopper-yang:/data
+volumes:
+  graphhopper-ying: {name: "${COMPOSE_PROJECT_NAME}-graphhopper-ying", external: false}
+  graphhopper-yang: {name: "${COMPOSE_PROJECT_NAME}-graphhopper-yang", external: false}
+  graphhopper-data: {name: "${COMPOSE_PROJECT_NAME}-graphhopper-data", external: false}
+  graphhopper-traefik: {name: "${COMPOSE_PROJECT_NAME}-graphhopper-traefik", external: false}
+  switcher-data: {name: "${COMPOSE_PROJECT_NAME}-graphhopper-lbdata", external: false}

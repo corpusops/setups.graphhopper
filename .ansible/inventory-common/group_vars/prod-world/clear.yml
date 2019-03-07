@@ -1,0 +1,6 @@
+---
+cops_graphhopper_name: "graphhopper-world"
+cops_graphhopper_http_port: 11312
+cops_graphhopper_mem: "13g"
+# weekly
+cops_graphhopper_cache_backend_expiry: 604800

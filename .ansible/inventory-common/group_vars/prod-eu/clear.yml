@@ -1,0 +1,7 @@
+---
+cops_graphhopper_name: "graphhopper-eu"
+cops_graphhopper_http_port: 11112
+cops_graphhopper_pbfs: "/data/europe.pbf"
+cops_graphhopper_mem: "10g"
+# daily
+cops_graphhopper_cache_backend_expiry: 86400

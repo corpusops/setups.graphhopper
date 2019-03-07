@@ -1,0 +1,7 @@
+---
+cops_graphhopper_name: "graphhopper-fr"
+cops_graphhopper_http_port: 11212
+cops_graphhopper_pbfs: "/data/europe_france.pbf"
+cops_graphhopper_mem: "8g"
+# half daily
+cops_graphhopper_cache_backend_expiry: 43200

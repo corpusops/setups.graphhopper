@@ -1,0 +1,10 @@
+---
+# APP
+- hosts: "{{graphhopper_servers|default('all')}}"
+  roles: [corpusops.roles/ansible_plugins]
+  tasks:
+  - when: ["cops_graphhopper_lifecycle_app|default(true)"]
+    tags: ["cops_graphhopper_lifecycle_app"]
+    block:
+    - include_role: {name: graphhopper_vars, public: true, allow_duplicates: false}
+    - include_role: {name: graphhopper,      public: true, allow_duplicates: false}

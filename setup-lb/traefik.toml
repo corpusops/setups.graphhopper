@@ -1,0 +1,38 @@
+debug = false
+logLevel = "ERROR"
+defaultEntryPoints = ["http"]
+entryPoints = { http = {address = ":80"}}
+api = { entryPoint = "traefik", dashboard = true }
+ping = { entryPoint = "traefik", dashboard = true }
+rest = { entryPoint = "traefik", dashboard = true }
+# filePath = "log/traefik.log" / format: "common/json"
+{{'{{'}} $accesslogpath := .Env.TRAEFIK_ACCESS_LOG_PATH | default "os.Stdout" }}
+{{'{{'}} $logpath :=       .Env.TRAEFIK_LOG_PATH | default "/logs/traefik.log" }}
+traefikLog = { filePath = "{{'{{'}}$logpath}}", format = "common" }
+accessLog = { filePath = "{{'{{'}}$accesslogpath}}", format = "common" }
+[file]
+{% for i in cops_graphhopper_proxied_groups %}
+{%  set grp = groups.get(i, []) %}
+{%  if grp %}
+{%    set hname = grp[0] %}
+{%    set gvars = hostvars[hname] %}
+[frontends.graphhopper{{i}}]
+  backend = "graphhopper{{i}}"
+  passHostHeader = true
+  [frontends.graphhopper{{i}}.routes.route]
+    rule = "Host:{{(
+       [gvars.cops_graphhopper_hostname]+gvars.cops_graphhopper_alternate_hostnames
+    )|join(',')}}"
+[backends.graphhopper{{i}}]
+    healthcheck = { path = "/maps/", interval = "15s" }
+    [backends.graphhopper{{i}}.loadbalancer.stickiness]
+{%    for host in grp %}
+    [backends.graphhopper{{i}}.servers.graphhopper{{loop.index0}}]
+{%      set hvars = hostvars[host] %}
+      url = "http://{{
+        hvars.cops_graphhopper_out_ip}}:{{hvars.cops_graphhopper_http_port}}"
+{%    endfor %}
+{%  endif %}
+{% endfor %}
+
+{{ cops_graphhopper_traefik_extra }}

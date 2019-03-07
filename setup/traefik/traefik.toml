@@ -1,0 +1,16 @@
+debug = false
+logLevel = "INFO"
+defaultEntryPoints = ["http"]
+entryPoints = { http = {address = ":80"}}
+# filePath = "log/traefik.log" / format: "common/json"
+{{'{{'}} $accesslogpath := .Env.TRAEFIK_ACCESS_LOG_PATH | default "os.Stdout" }}
+{{'{{'}} $logpath :=       .Env.TRAEFIK_LOG_PATH | default "/logs/traefik.log" }}
+traefikLog = { filePath = "{{'{{'}}$logpath}}", format = "common" }
+accessLog = { filePath = "{{'{{'}}$accesslogpath}}", format = "common" }
+api = { entryPoint = "traefik", dashboard = true }
+ping = { entryPoint = "traefik", dashboard = true }
+rest = { entryPoint = "traefik", dashboard = true }
+[file]
+  Directory = "/traefik/"
+  watch = true
+

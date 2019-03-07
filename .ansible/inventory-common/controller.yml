@@ -1,0 +1,6 @@
+controller: {hosts: {localhost: {ansible_connection: local}}}
+ssh_envs:
+  vars:
+    sudo_flags: "-HE"
+    ansible_user: root
+    ansible_ssh_common_args: "-i {{cops_deploy_ssh_key_paths['deploy'].path}} -p {{ansible_port}} -o IdentitiesOnly=yes"

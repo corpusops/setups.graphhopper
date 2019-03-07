@@ -1,0 +1,12 @@
+[frontends.graphhopper]
+  backend = "graphhopper"
+  passHostHeader = true
+[frontends.graphhopper.routes.graphhopper]
+    rule = "PathPrefix:/"
+[backends.graphhopper]
+  healthcheck = { path = "/", interval = "15s" }
+[backends.graphhopper.loadbalancer.stickiness]
+[backends.graphhopper.servers.ying]
+  url = "http://graphhopper-ying:8989"
+[backends.graphhopper.servers.yang]
+  url = "http://graphhopper-yang:8989"

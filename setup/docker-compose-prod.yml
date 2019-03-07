@@ -1,0 +1,22 @@
+version: '3.7'
+services:
+  traefik:
+    restart: unless-stopped
+    ports:
+    - "0.0.0.0:{{cops_graphhopper_http_port}}:80"
+    {% if cops_graphhopper_https_port %}- "0.0.0.0:{{cops_graphhopper_https_port}}:443"{%endif%}
+  graphhopper-ying:
+    restart: unless-stopped
+    ports:
+    - "127.0.0.1:{{cops_graphhopper_ying_port}}:8989"
+    volumes:
+    - graphhopper-ying-logs:/graphhopper/logs
+  graphhopper-yang:
+    restart: unless-stopped
+    ports:
+    - "127.0.0.1:{{cops_graphhopper_yang_port}}:8989"
+    volumes:
+    - graphhopper-yang-logs:/graphhopper/logs
+volumes:
+  graphhopper-ying-logs: {name: "$COMPOSE_PROJECT_NAME-graphhopper-ying-logs", external: false}
+  graphhopper-yang-logs: {name: "$COMPOSE_PROJECT_NAME-graphhopper-yang-logs", external: false}

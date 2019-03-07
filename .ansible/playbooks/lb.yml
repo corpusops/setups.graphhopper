@@ -1,0 +1,19 @@
+---
+- hosts: "{{groups[graphhopper_servers|default('all')]}}"
+  roles: [corpusops.roles/ansible_plugins]
+  tasks:
+  - block:
+    - include_role: {public: true, name: graphhopper_vars}
+    # reexport vars as facts to use in next steps
+    - include_role: {name: corpusops.roles/vars_registry}
+      vars: {cops_vars_registry_target: cops_graphhopper}
+    when: ["cops_graphhopper_lifecycle_lb|default(true)"]
+    tags: ["cops_graphhopper_lifecycle_lb"]
+- hosts: "{{lb_servers|default('all')}}"
+  roles: [corpusops.roles/ansible_plugins]
+  tasks:
+  - block:
+    - include_role: {public: true, name: graphhopper_vars}
+    - include_role: {public: true, name: graphhopper_lb}
+    when: ["cops_graphhopper_lifecycle_lb|default(true)"]
+    tags: ["cops_graphhopper_lifecycle_lb"]

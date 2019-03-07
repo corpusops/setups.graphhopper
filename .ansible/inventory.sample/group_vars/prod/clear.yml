@@ -1,0 +1,5 @@
+cops_graphhopper_http_protect_password: ""
+cops_graphhopper_deploy_env: prod
+cops_graphhopper_lb_http_port: 83
+cops_graphhopper_proxied: [fr, eu, world]
+# cops_graphhopper_out_ip: "127.0.0.1"

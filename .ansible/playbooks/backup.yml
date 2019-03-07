@@ -1,0 +1,18 @@
+# BACKUP
+- hosts: "{{graphhopper_servers|default('all')}}"
+  roles: [corpusops.roles/ansible_plugins]
+  tasks:
+  - when: ["cops_graphhopper_lifecycle_prebackup|default(true)"]
+    tags: ["cops_graphhopper_lifecycle_prebackup"]
+    block:
+    - include_role: {name: graphhopper_vars, allow_duplicates: false, public: true}
+  - block:
+    - set_fact:
+        cops_project_backup_postgresql: "{{cops_graphhopper_backup_postgresql}}"
+    - include_role: {name: "corpusops.roles/project_backup", public: false}
+    vars:
+      cops_project_backup_postgresql: "{{cops_graphhopper_backup_postgresql}}"
+      cops_project_backup_paths_to_backup: "{{cops_graphhopper_backup_paths_to_backup}}"
+      cops_project_backup_docker_volumes: "{{cops_graphhopper_backup_docker_volumes_}}"
+      cops_project_backup_pgdump_urls: "{{cops_graphhopper_backup_pgdump_urls}}"
+      cops_project_backup_dir: "{{cops_project_backups_dir}}/{{cops_graphhopper_db_name}}"

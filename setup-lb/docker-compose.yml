@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  traefik:
+    env_file: [.env, docker.env]
+    image: corpusops/traefik:alpine
+    entrypoint:
+    - /bin/sh
+    - "-exc"
+    - >
+      set -x
+      && frep /traefik.toml:/traefik.toml.r --overwrite
+      && traefik
+      --sendanonymoususage=false --defaultentrypoints=http
+      --accesslog --accesslog.bufferingsize=10 --loglevel=info
+      --rest --api --web --web.metrics -c /traefik.toml.r
+    volumes:
+    - ./traefik.toml:/traefik.toml
