@@ -140,3 +140,4 @@ cops_graphhopper_code_rsync_opts: [
     "--exclude", "local/*",
     "--exclude", ".env",
     "--exclude", "docker.env"]
+cops_graphhopper_listen_ip: 0.0.0.0

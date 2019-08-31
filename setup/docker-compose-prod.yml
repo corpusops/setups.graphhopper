@@ -3,7 +3,7 @@ services:
   traefik:
     restart: unless-stopped
     ports:
-    - "0.0.0.0:{{cops_graphhopper_http_port}}:80"
+    - "{{cops_graphhopper_listen_ip}}:{{cops_graphhopper_http_port}}:80"
     {% if cops_graphhopper_https_port %}- "0.0.0.0:{{cops_graphhopper_https_port}}:443"{%endif%}
   graphhopper-ying:
     restart: unless-stopped
