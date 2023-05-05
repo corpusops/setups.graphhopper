@@ -1,7 +1,7 @@
 ---
 coeu_graphhopper_name: graphhopperinstance
 cops_graphhopper_git_url: "https://github.com/graphhopper/graphhopper.git"
-cops_graphhopper_git_ver: "master"
+cops_graphhopper_git_ver: "4.x"
 cops_graphhopper_project_module_name: "{{cops_graphhopper_name}}"
 cops_graphhopper_settings_module: "{{cops_graphhopper_project_module_name}}.settings.instances.{{cops_graphhopper_deploy_env}}"
 cops_graphhopper_deploy_env: "dev"
@@ -9,7 +9,7 @@ cops_graphhopper_docker_image: "{{cops_graphhopper_name}}"
 cops_graphhopper_default_docker_tag: "latest"
 cops_graphhopper_docker_tag: "{{cops_graphhopper_default_docker_tag}}"
 cops_graphhopper_tld_domain: example.com
-cops_graphhopper_default_gitref: "master"
+cops_graphhopper_default_gitref: "{{cops_graphhopper_git_ver}}"
 cops_graphhopper_gitref: "{{cops_graphhopper_default_gitref}}"
 cops_graphhopper_dir: "/srv/docker/{{cops_graphhopper_name}}"
 cops_graphhopper_lb_dir: "/srv/docker/graphhopper-lb"
@@ -93,13 +93,16 @@ cops_graphhopper_javaopts: >-
   -XX:+ParallelRefProcEnabled
   -XX:+ExplicitGCInvokesConcurrent
   -XX:MaxMetaspaceExpansion=64M
+  -Dlog4j2.formatMsgNoLookups=true
 # free form for params inside dockerenv
 cops_graphhopper_lb_dotenv_extra: ""
 cops_graphhopper_lb_dotenv: |-
   COMPOSE_PROJECT_NAME={{cops_graphhopper_lb_composename}}
+  COMPOSE_FILE={{cops_graphhopper_compose_lb_files|join(':')}}
 cops_graphhopper_dotenv: |-
   APP_TYPE=graphhopper
   COMPOSE_PROJECT_NAME={{cops_graphhopper_composename}}
+  COMPOSE_FILE={{cops_graphhopper_compose_files|join(':')}}
   CI_COMMIT_SHA={{cops_graphhopper_gitref}}
   GRAPHHOPPER_NAME={{ cops_graphhopper_name }}
   GRAPHHOPPER_IMAGE={{ cops_graphhopper_docker_image }}

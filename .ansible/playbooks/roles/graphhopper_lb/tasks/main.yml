@@ -42,7 +42,18 @@
     mode: '{{ item.mode }}'
     trim_blocks: false
   with_filetree: "{{playbook_dir}}/../../setup-lb/"
-  when: item.state == 'file'
+  when:
+  - "item.state == 'file'"
+  - "not item.path|regex_search('\\.frep$|conf.d|maintenance.*\\.py')"
+- name: Copy files
+  copy:
+    src: '{{ item.src }}'
+    dest: "{{cops_graphhopper_compose_lb_dir}}/{{ item.path }}"
+    mode: '{{ item.mode }}'
+  with_filetree: "{{playbook_dir}}/../../setup-lb/"
+  when:
+  - "item.state == 'file'"
+  - "     item.path|regex_search('\\.frep$|conf.d|maintenance.*\\.py')"
 - include_tasks: docker_login.yml
   with_items: "{{cops_graphhopper_registries}}"
 - shell: |

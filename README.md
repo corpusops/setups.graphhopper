@@ -4,6 +4,11 @@
 - Every once and then, a colocated daemon will detach one of the daemons and refresh the routing from the OSM last extract and then refresh the first (ying) instance upon termination.
 
 
+## changelog
+- 20211214: upgrade graphhopper known version:
+    - from: https://github.com/graphhopper/graphhopper/commit/a8c654b05b2df1df0bf89f5dc2e17ee48bf2e1eb
+    - to:
+
 ## First clone
 ```sh
 git clone --recursive https://github.com/corpusops/setups.graphhopper.git
@@ -48,4 +53,19 @@ ancers from loadbalancers themselves
 ## Switcher docs
 . [docs](./switcher/controller/README.md)
 
+## wellknown playbooks
+
+### setup frontal playbook
+```sh
+cd /srv/graphhopper
+.ansible/scripts/call_ansible.sh -vvvvv .ansible/playbooks/lb.yml \
+ -e "{lb_servers: prod_loc-lb, graphhopper_servers: prod_loc-graphhopper}"
+```
+
+### setup a specific region graphhopper instance
+```sh
+cd /srv/graphhopper
+.ansible/scripts/call_ansible.sh -vvvvv .ansible/playbooks/graphhopper.yml \
+ -e "{graphhopper_servers: prod_loc-fr}"
+```
 
